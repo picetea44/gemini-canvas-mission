@@ -37,7 +37,7 @@
         .toast-leave { animation: fadeOut 0.5s ease-in forwards; }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-200 font-sans h-screen flex flex-col overflow-hidden selection:bg-amber-600 selection:text-white">
+<body class="bg-slate-900 text-slate-200 font-sans h-screen flex flex-col overflow-hidden selection:bg-amber-600 selection:text-white transition-colors duration-500">
 
 <!-- 토스트 알림 컨테이너 -->
 <div id="toast-container" class="fixed top-5 left-1/2 z-[60] flex flex-col gap-2 pointer-events-none w-full max-w-sm px-4"></div>
@@ -113,10 +113,10 @@
 </div>
 
 <!-- 상단 상태바 (UI) -->
-<header class="bg-slate-800 border-b border-amber-900/50 shadow-lg p-4 z-10">
+<header id="main-header" class="bg-slate-800 border-b border-amber-900/50 shadow-lg p-4 z-10 transition-colors duration-500">
     <div class="max-w-3xl mx-auto flex flex-wrap justify-between items-center gap-4">
         <div class="flex items-center gap-2">
-            <div class="bg-amber-900/80 text-amber-100 px-3 py-1 rounded-md text-sm font-bold tracking-wider border border-amber-700">
+            <div id="ui-class-container" class="bg-amber-900/80 text-amber-100 px-3 py-1 rounded-md text-sm font-bold tracking-wider border border-amber-700 transition-colors duration-500">
                 <span id="ui-class">직업 선택 중...</span>
             </div>
         </div>
@@ -134,19 +134,20 @@
                 <span class="text-yellow-400 drop-shadow-md group-hover:scale-110 transition-transform">🪙</span>
                 <span id="ui-gold" class="text-slate-100">- G</span>
             </div>
-            <div class="flex gap-2 ml-1">
+            <div class="flex gap-2 ml-1 border-l border-slate-600 pl-3">
                 <button onclick="openSkillModal()" class="text-xl hover:scale-110 transition-transform" title="스킬 사용">✨</button>
                 <button onclick="openInventoryModal()" class="text-xl hover:scale-110 transition-transform" title="인벤토리">🎒</button>
                 <button onclick="openAchieveModal()" class="text-xl hover:scale-110 transition-transform" title="업적 보기">🏆</button>
+                <button onclick="restartGame()" class="text-xl hover:scale-110 transition-transform ml-1" title="다시 시작">🔄</button>
             </div>
         </div>
     </div>
 </header>
 
 <!-- 게임 결과 배너 (숨김 상태) -->
-<div id="ending-banner" class="hidden w-full text-center py-3 px-4 shadow-md z-20 flex justify-center items-center gap-4">
+<div id="ending-banner" class="hidden w-full py-3 px-4 shadow-md z-20 justify-center items-center gap-4 transition-colors duration-500 text-white">
     <span id="ending-text" class="font-bold text-lg"></span>
-    <button onclick="restartGame()" class="bg-white/20 hover:bg-white/30 text-white text-sm font-bold py-1 px-3 rounded shadow transition-colors">
+    <button onclick="restartGame()" class="bg-black/20 hover:bg-black/40 text-white text-sm font-bold py-1 px-3 rounded shadow transition-colors border border-white/20">
         🔄 다시 시작
     </button>
 </div>
@@ -160,11 +161,11 @@
 <footer class="bg-slate-800 border-t border-slate-700 p-4 shrink-0">
     <div class="max-w-3xl mx-auto flex gap-2">
         <input type="text" id="user-input"
-               class="flex-1 bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600 transition-colors"
+               class="flex-1 bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600 transition-all duration-300"
                placeholder="당신의 행동을 입력하세요... (예: 검을 뽑고 공격한다, 설득해본다)"
                autocomplete="off">
         <button id="send-btn"
-                class="bg-amber-700 hover:bg-amber-600 text-amber-50 font-bold px-6 py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[80px]">
+                class="bg-amber-700 hover:bg-amber-600 text-amber-50 font-bold px-6 py-3 rounded-lg transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[80px]">
             행동
         </button>
     </div>
@@ -173,6 +174,55 @@
 <script>
     // 시스템 환경에서 제공되는 API Key
     const apiKey = "";
+
+    // 테마 관리
+    const themes = {
+        'default': {
+            bodyBg: 'bg-slate-900',
+            badge: 'bg-amber-900/80 text-amber-100 border-amber-700',
+            headerBorder: 'border-amber-900/50',
+            userInput: 'focus:border-amber-600 focus:ring-amber-600',
+            sendBtn: 'bg-amber-700 hover:bg-amber-600 text-amber-50',
+            userBubble: 'bg-amber-700 text-white',
+            optionBtn: 'hover:bg-amber-700 hover:border-amber-500 hover:text-white',
+            dmName: 'text-amber-500',
+            highlight: 'text-amber-400'
+        },
+        '용감한 전사': {
+            bodyBg: 'bg-red-950',
+            badge: 'bg-red-900/80 text-red-100 border-red-700',
+            headerBorder: 'border-red-900/50',
+            userInput: 'focus:border-red-600 focus:ring-red-600',
+            sendBtn: 'bg-red-700 hover:bg-red-600 text-red-50',
+            userBubble: 'bg-red-700 text-white',
+            optionBtn: 'hover:bg-red-700 hover:border-red-500 hover:text-white',
+            dmName: 'text-red-500',
+            highlight: 'text-red-400'
+        },
+        '날렵한 도적': {
+            bodyBg: 'bg-emerald-950',
+            badge: 'bg-emerald-900/80 text-emerald-100 border-emerald-700',
+            headerBorder: 'border-emerald-900/50',
+            userInput: 'focus:border-emerald-600 focus:ring-emerald-600',
+            sendBtn: 'bg-emerald-700 hover:bg-emerald-600 text-emerald-50',
+            userBubble: 'bg-emerald-700 text-white',
+            optionBtn: 'hover:bg-emerald-700 hover:border-emerald-500 hover:text-white',
+            dmName: 'text-emerald-500',
+            highlight: 'text-emerald-400'
+        },
+        '신비한 마법사': {
+            bodyBg: 'bg-blue-950',
+            badge: 'bg-blue-900/80 text-blue-100 border-blue-700',
+            headerBorder: 'border-blue-900/50',
+            userInput: 'focus:border-blue-600 focus:ring-blue-600',
+            sendBtn: 'bg-blue-700 hover:bg-blue-600 text-blue-50',
+            userBubble: 'bg-blue-700 text-white',
+            optionBtn: 'hover:bg-blue-700 hover:border-blue-500 hover:text-white',
+            dmName: 'text-blue-500',
+            highlight: 'text-blue-400'
+        }
+    };
+    let currentTheme = themes['default'];
 
     // 게임 상태 관리
     let playerClass = "";
@@ -228,12 +278,35 @@
 1. 직업(${playerClass})의 특성과 사용한 스킬을 반영하여 극적이고 유리한 결과를 산출하세요.
 2. 행동의 결과에 따라 체력(current_hp), 마나(current_mp), 골드(current_gold)를 논리적으로 증감시키세요. (스킬을 사용했을 경우 스킬에 맞는 마나를 감소시키세요.)
 3. 플레이어가 아이템을 획득하거나 소비하면 inventory 배열을 반드시 갱신하세요. (아이템을 사용하면 배열에서 삭제)
-4. 매 턴마다 플레이어가 다음에 할 수 있는 행동 선택지 2~3가지를 'options' 배열에 짧은 문장(예: "검을 휘두른다", "조용히 숨는다")으로 제공하세요.
-5. DM의 묘사(dm_reply)는 한 번에 너무 길지 않게 3~4문장 내외로 유지하세요.
+4. ★[매우 중요] game_state가 'playing'인 동안에는 플레이어가 다음에 할 수 있는 구체적인 행동 선택지 2~3가지를 무조건 'options' 배열에 작성하세요. (예: ["검을 휘두른다", "조용히 숨는다", "마법을 준비한다"])
+5. DM의 묘사(dm_reply)는 상황 묘사와 대사가 확실히 구분되도록 문단 사이에 반드시 줄바꿈 2번(\\n\\n)을 사용하세요. 가독성을 위해 한 문단의 길이는 2~3문장을 넘지 않게 하세요.
 
 [업적 시스템 규칙]
 플레이어가 기발한 행동을 하거나 특정 조건(예: 전투 승리, 보물 발견, 바보 같은 죽음, NPC 설득 등)을 달성하면, 'new_achievement' 필드에 재미있는 업적 이름(예: "고블린 슬레이어", "말빨의 달인")을 짧게 반환하세요. 이번 턴에 달성한 특별한 업적이 없다면 빈 문자열("")을 반환하세요.
 `;
+    }
+
+    // 테마 적용 함수
+    function applyTheme(jobName) {
+        // 이전 배경색 클래스 제거
+        document.body.classList.remove(currentTheme.bodyBg);
+
+        currentTheme = themes[jobName] || themes['default'];
+
+        // 새로운 배경색 클래스 추가
+        document.body.classList.add(currentTheme.bodyBg);
+
+        const header = document.getElementById('main-header');
+        header.className = `bg-slate-800 border-b shadow-lg p-4 z-10 transition-colors duration-500 ${currentTheme.headerBorder}`;
+
+        const badge = document.getElementById('ui-class-container');
+        badge.className = `px-3 py-1 rounded-md text-sm font-bold tracking-wider border transition-colors duration-500 ${currentTheme.badge}`;
+
+        const input = document.getElementById('user-input');
+        input.className = `flex-1 bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none transition-all duration-300 ${currentTheme.userInput}`;
+
+        const btn = document.getElementById('send-btn');
+        btn.className = `font-bold px-6 py-3 rounded-lg transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[80px] ${currentTheme.sendBtn}`;
     }
 
     // 게임 시작 (직업 선택 시 호출)
@@ -249,9 +322,16 @@
         gameState = "playing";
         chatHistory = [];
 
+        // 직업에 따른 테마 적용
+        applyTheme(jobName);
+
         // 모달 숨기기 및 UI 초기화
         jobModal.classList.add('hidden');
+
+        // 엔딩 배너 강제 숨김 처리 (CSS 충돌 방지)
         endingBanner.classList.add('hidden');
+        endingBanner.classList.remove('flex', 'bg-green-600', 'bg-red-800', 'bg-purple-700');
+
         chatContainer.innerHTML = '';
         uiClass.textContent = playerClass;
         updateUI();
@@ -372,7 +452,7 @@
         processTurn(`[아이템 사용: ${itemName}]`);
     }
 
-    // UI 업데이트 함수
+    // UI 업데이트 함수 (DOM 덮어쓰기 방지)
     function updateUI() {
         uiHp.textContent = `${Math.max(0, currentHp)}/${maxHp}`;
         uiMp.textContent = `${Math.max(0, currentMp)}/${maxMp}`;
@@ -384,15 +464,18 @@
             sendBtn.disabled = true;
             userInput.placeholder = "게임이 종료되었습니다.";
 
-            endingBanner.classList.remove('hidden');
+            // 기존 클래스를 보존하면서 배너 상태만 안전하게 토글
+            endingBanner.classList.remove('hidden', 'bg-green-600', 'bg-red-800', 'bg-purple-700');
+            endingBanner.classList.add('flex');
+
             if (gameState === 'victory_ending') {
-                endingBanner.className = "w-full py-3 px-4 shadow-md z-20 flex justify-center items-center gap-4 bg-green-600 text-white";
+                endingBanner.classList.add('bg-green-600');
                 endingText.innerHTML = "🎉 [해피 엔딩] 마을의 영웅이 되었습니다!";
             } else if (gameState === 'defeat_ending') {
-                endingBanner.className = "w-full py-3 px-4 shadow-md z-20 flex justify-center items-center gap-4 bg-red-800 text-white";
+                endingBanner.classList.add('bg-red-800');
                 endingText.innerHTML = "💀 [배드 엔딩] 모험은 여기서 끝났습니다...";
             } else if (gameState === 'secret_ending') {
-                endingBanner.className = "w-full py-3 px-4 shadow-md z-20 flex justify-center items-center gap-4 bg-purple-700 text-white";
+                endingBanner.classList.add('bg-purple-700');
                 endingText.innerHTML = "🤫 [히든 엔딩] 역사는 당신을 다르게 기억할 것입니다.";
             }
         }
@@ -406,28 +489,36 @@
         const bubble = document.createElement('div');
 
         if (role === 'user') {
-            bubble.className = "bg-amber-700 text-white max-w-[85%] md:max-w-[75%] rounded-2xl rounded-tr-sm px-5 py-3 shadow-md whitespace-pre-wrap";
+            bubble.className = `${currentTheme.userBubble} max-w-[85%] md:max-w-[75%] rounded-2xl rounded-tr-sm px-5 py-3 shadow-md whitespace-pre-wrap`;
             bubble.textContent = text;
         } else {
-            bubble.className = "bg-slate-800 border border-slate-700 text-slate-200 max-w-[90%] md:max-w-[85%] rounded-2xl rounded-tl-sm px-5 py-4 shadow-lg leading-relaxed flex flex-col gap-3";
+            bubble.className = "bg-slate-800 border border-slate-700 text-slate-200 max-w-[90%] md:max-w-[85%] rounded-2xl rounded-tl-sm px-5 py-4 shadow-lg flex flex-col gap-3";
 
             const textDiv = document.createElement('div');
-            textDiv.className = "whitespace-pre-wrap";
-            const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<span class="text-amber-400 font-bold">$1</span>');
-            textDiv.innerHTML = `<div class="font-bold text-amber-500 mb-1 text-sm flex items-center gap-1">🧙‍♂️ 게임 마스터 (DM)</div>${formattedText}`;
+            textDiv.className = "text-base";
+
+            // 마크다운 볼드체 처리 및 가독성을 위한 문단 나누기
+            let formattedText = text.replace(/\*\*(.*?)\*\*/g, `<span class="${currentTheme.highlight} font-bold">$1</span>`);
+
+            // \n\n 기준으로 문단을 나누어 p 태그로 감싸기 (가독성 대폭 향상)
+            formattedText = formattedText
+                .split(/\n\n+/)
+                .map(p => `<p class="mb-4 last:mb-0 leading-relaxed">${p.replace(/\n/g, '<br>')}</p>`)
+                .join('');
+
+            textDiv.innerHTML = `<div class="font-bold ${currentTheme.dmName} mb-3 text-sm flex items-center gap-1">🧙‍♂️ 게임 마스터 (DM)</div>${formattedText}`;
             bubble.appendChild(textDiv);
 
             // 선택지 버튼 추가
             if (options && options.length > 0 && gameState === 'playing') {
                 const optionsDiv = document.createElement('div');
-                optionsDiv.className = "flex flex-wrap gap-2 mt-2 pt-3 border-t border-slate-600/50";
+                optionsDiv.className = "flex flex-wrap gap-2 mt-2 pt-4 border-t border-slate-600/50";
 
                 options.forEach(opt => {
                     const btn = document.createElement('button');
-                    btn.className = "option-btn bg-slate-700 hover:bg-amber-700 border border-slate-500 hover:border-amber-500 text-slate-200 hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-sm text-left";
+                    btn.className = `option-btn bg-slate-700 border border-slate-500 text-slate-200 px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-sm text-left ${currentTheme.optionBtn}`;
                     btn.textContent = `▶ ${opt}`;
                     btn.onclick = () => {
-                        // 버튼 클릭 시 채팅창에 입력한 것과 동일하게 처리
                         processTurn(opt);
                     };
                     optionsDiv.appendChild(btn);
@@ -497,11 +588,11 @@
     async function processTurn(userText) {
         if (gameState !== 'playing') return;
 
-        // 기존의 선택지 버튼 비활성화 (중복 클릭 방지)
+        // 기존의 선택지 버튼 비활성화 (중복 클릭 방지 및 회색 처리)
         document.querySelectorAll('.option-btn').forEach(btn => {
             btn.disabled = true;
-            btn.classList.add('opacity-50', 'cursor-not-allowed');
-            btn.classList.remove('hover:bg-amber-700', 'hover:border-amber-500', 'hover:text-white');
+            // 기존 테마 호버 효과를 제거하고 완전히 비활성화된 디자인으로 교체
+            btn.className = "option-btn bg-slate-700 border border-slate-600 text-slate-400 px-4 py-2 rounded-lg text-sm font-bold shadow-sm text-left opacity-50 cursor-not-allowed";
         });
 
         if (userText) {
@@ -516,7 +607,7 @@
         sendBtn.disabled = true;
         showTyping();
 
-        // API Schema 확장: options 필드 추가
+        // API Schema 확장: options 필드 설명 강화
         const payload = {
             systemInstruction: { parts: [{ text: getSystemPrompt() }] },
             contents: chatHistory,
@@ -532,7 +623,7 @@
                         game_state: { type: "STRING" },
                         new_achievement: { type: "STRING", description: "이번 턴에 달성한 특별한 업적 이름 (없으면 빈 문자열)" },
                         inventory: { type: "ARRAY", items: { type: "STRING" }, description: "아이템 사용 및 획득이 반영된 현재 소지품 목록" },
-                        options: { type: "ARRAY", items: { type: "STRING" }, description: "플레이어가 다음에 할 수 있는 행동 선택지 2~3개" }
+                        options: { type: "ARRAY", items: { type: "STRING" }, description: "반드시 제공해야 하는 2~3개의 행동 선택지 (게임 종료 시에만 빈 배열)" }
                     },
                     required: ["dm_reply", "current_hp", "current_mp", "current_gold", "game_state", "new_achievement", "inventory", "options"]
                 }

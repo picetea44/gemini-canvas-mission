@@ -42,7 +42,7 @@ https://gemini.google.com/share/9cf1f865fa68
 ### 앱 이름
 우아한 웹 TRPG
 ### 배포 링크
-https://gemini.google.com/share/a5bf22753a22
+https://gemini.google.com/share/e0c2ca49739b
 ### 이 앱을 만든 이유
 
 - TRPG는 대화를 통해 함께 이야기를 만들어가는 스토리텔링 게임을 말합니다. 플레이어는 정해진 선택지를 누르는 대신, 이야기의 주인공이 되어 자신의 의지대로 자유롭게 행동하고 대화하며 서사를 이끌어갑니다.
@@ -96,7 +96,7 @@ https://gemini.google.com/share/b4abdb5a8245
 @smiinii
 
 ### 배포 링크
-[https://gemini.google.com/share/53c02d6aecec](https://gemini.google.com/share/53c02d6aecec) 
+https://gemini.google.com/share/25e597b8a32b
 ### 이 앱을 만든 이유
 
 - 다양한 생활습관을 가진 5명이 한 팀으로 밀접하게 협업하는 과정에서 각자의 상황이 공유되지 않아 의사소통 및 일정 공유 과정에서 불편함을 많이 느껴 만들게 되었습니다.
